@@ -1,0 +1,88 @@
+<%- include('../partials/header') %>
+    <div class="container py-4">
+        <div class="row">
+            <%- include('../partials/side_info') %>
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Author</th>
+                                        <th>Post day</th>
+                                        <th>Title</th>
+                                        <th>Content</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (typeof posts !=='undefined' ) { %>
+                                        <% posts?.forEach(post=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= post.author %>
+                                                </td>
+                                                <td id="joined_day">
+                                                    <%= post.createdAt %>
+                                                </td>
+                                                <td>
+                                                    <%= post.title %>
+                                                </td>
+                                                <td>
+                                                    <%= post.content %>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-danger"><a id="deletePost"
+                                                            href="deletePost/<%= post._id %>"
+                                                            class="text-white">Delete</a></button>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                                <% } else {%>
+                                                    <tr>
+                                                        <td colspan="5">No blogs found</td>
+                                                    </tr>
+                                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <%- include('../partials/footer') %>
+
+        <script>
+            function formatDate(dateStr) {
+                    const date = new Date(dateStr);
+                    const day = String(date.getDate()).padStart(2, '0'); // Pad single digit days with leading zero
+                    const month = String(date.getMonth() + 1).padStart(2, '0'); // Pad single digit months with leading zero, getMonth() returns 0-11
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+                const joinedDay = document.querySelectorAll('#joined_day');
+                joinedDay.forEach(day => {
+                    day.textContent = formatDate(day.textContent);
+                });
+            const deletePost = document.querySelectorAll('#deletePost');
+            deletePost.forEach(post => {
+                post.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const postId = e.target.href.split('/').pop();
+                    const res = await fetch(`deletePost/${postId}`, {
+                        method: 'DELETE' ,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    if (res.ok) {
+                        window.location.href = '/admin/getAllPosts';
+                    }
+                    else {
+                        alert('Something went wrong');
+                    }
+
+                });
+            });
+
+        </script>

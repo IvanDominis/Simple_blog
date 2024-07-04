@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const middlewareController = require("../middleware/auth.Middleware");
+const guetsController = require("../controllers/guest.Controller");
+router.get("/", guetsController.getHomepage);
+router.get("/about", guetsController.getAboutPage);
+router.get("/contact", guetsController.getContactPage);
+router.get('/post/:id', guetsController.getPostPage);
+router.get('/login', guetsController.getLoginPage);
+router.get('/register', guetsController.getRegisterPage);
+module.exports = router;

@@ -1,0 +1,161 @@
+<div class="col-lg-4">
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+                class="rounded-circle img-fluid" style="width: 150px;">
+            <h5 class="my-3">
+                <%= user.fullname || user.username %>
+            </h5>
+            <p class="text-muted mb-1">Your role is: <%= user.admin ? 'admin' :'user'%></p>
+            <div class="d-flex justify-content-center mb-2" style="padding: 3px">
+                <button type="button" data-mdb-button-init data-mdb-ripple-init data-bs-toggle="modal"
+                    data-bs-target="#updateModal" class="btn btn-outline-primary ms-1"
+                    style="padding: 6px 15px; width:180px">Update your profile</button>
+            </div>
+            <div class="d-flex justify-content-center mb-2" style="padding: 3px">
+                <button type="button" data-mdb-button-init data-mdb-ripple-init data-bs-toggle="modal"
+                    data-bs-target="#changePassModal" class="btn btn-outline-primary ms-1"
+                    style="padding: 6px 15px ; width:180px">Change password</button>
+            </div>
+            <% if (user.admin==true) { %>
+                <div class="d-flex justify-content-center mb-2" style="padding: 3px">
+                    <a type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1"
+                        id="manageUsers" style="padding: 6px 15px ; width:180px" href="/admin/getAllUsers">Manage
+                        Users</a>
+                </div>
+                <div class="d-flex justify-content-center mb-2" style="padding: 3px">
+                    <a type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1"
+                        id="manageBlogs" style="padding: 6px 15px ; width:180px" href="/admin/getAllPosts">Manage
+                        Blogs</a>
+                </div>
+                <% } %>
+                    <div class="d-flex justify-content-center mb-2" style="padding: 3px">
+                        <a type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1"
+                            style="padding: 6px 15px ; width:180px" href="/user/delete/<%=user._id%>">Delete account</a>
+                    </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update your profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="update">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="full-name" class="col-form-label">Full name:</label>
+                        <input type="text" class="form-control" name="fullname" id="Full-name" placeholder="John Smith">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="col-form-label">Phone:</label>
+                        <input type="tel" class="form-control" name="phone" id="Phone" placeholder="0969966969"
+                            pattern="[0-9]{10}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="col-form-label">Address:</label>
+                        <input type="text" class="form-control" name="address" id="Address"
+                            placeholder="69 Main ST, Ward 1, District 1, HCM City">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="changePassModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change your password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="changePass">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="password" class="col-form-label">Current password:</label>
+                        <input type="password" class="form-control" name="oldPass" id="oldPass" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="col-form-label">New password:</label>
+                        <input type="password" class="form-control" name="newPass" id="newPass" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="col-form-label">Repeat new password:</label>
+                        <input type="password" class="form-control" name="repnewPass" id="repnewPass" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const form = document.querySelector('form[id="update"]');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fullname = form.fullname.value;
+        const phone = form.phone.value;
+        const address = form.address.value;
+        const response = await fetch('/user/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fullname,
+                phone,
+                address
+            })
+        });
+        if (response.ok) {
+            alert('Profile updated successfully');
+            const fullnameEl = document.getElementById('fullname');
+            const phoneEl = document.getElementById('phone');
+            const addressEl = document.getElementById('address');
+            fullnameEl.textContent = fullname;
+            phoneEl.textContent = phone;
+            addressEl.textContent = address;
+            form.closest('.modal').querySelector('.btn-close').click();
+        } else {
+            alert('Failed to update profile');
+        }
+    });
+    const form1 = document.querySelector('form[id="changePass"]');
+    form1.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const oldPass = form1.oldPass.value;
+        const newPass = form1.newPass.value;
+        const repnewPass = form1.repnewPass.value;
+        if (newPass !== repnewPass) {
+            alert('New password and repeat new password do not match');
+            return;
+        }
+        const response = await fetch('/user/change-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                oldPass,
+                newPass
+            })
+        });
+        const res = await response.json();
+        if (response.ok) {
+            alert('Password changed successfully');
+            form1.closest('.modal').querySelector('.btn-close').click();
+        } else {
+            alert(res.message || 'Failed to change password');
+        }
+    });
+</script>

@@ -1,0 +1,82 @@
+<%- include('../partials/header') %>
+    <div class="container py-4">
+        <div class="row">
+            <%- include('../partials/side_info') %>
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Fullname</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (typeof users !=='undefined' ) { %>
+                                        <% users?.forEach(userl=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= userl.username %>
+                                                </td>
+                                                <td>
+                                                    <%= userl.fullname %>
+                                                </td>
+                                                <td>
+                                                    <%= userl.email %>
+                                                </td>
+                                                <td>
+                                                    <%= userl.phone %>
+                                                </td>
+                                                <td>
+                                                    <%= userl.address %>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-danger">
+                                                        <a id="deleteUser" href="deleteUser/<%= userl._id %>"
+                                                            class="text-white">Delete</a>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                                <% } else {%>
+                                                    <tr>
+                                                        <td colspan="6">No users found</td>
+                                                    </tr>
+                                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <%- include('../partials/footer') %>
+        <script>
+            const deleteUser = document.querySelectorAll('#deleteUser');
+            deleteUser.forEach(user => {
+                user.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const userId = e.target.href.split('/').pop();
+                    const res = await fetch(`deleteUser/${userId}`, {
+                        method: 'DELETE',
+                         headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    console.log(res);
+                    if (res.ok) {
+                        window.location.href = '/admin/getAllUsers';
+                    }
+                    else {
+                        alert('Something went wrong');
+                    }
+
+                });
+            });
+
+        </script>

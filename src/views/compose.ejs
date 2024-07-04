@@ -1,0 +1,66 @@
+<%- include('partials/header') %>
+
+    <header class="masthead" style="background-image: url('/images/post-sample-image.jpg')">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="post-heading">
+                        <h1>Man must explore, and this is exploration at its greatest</h1>
+                        <h2 class="subheading">Problems look mighty small from 150 miles up</h2>
+                        <span class="meta">
+                            Posted by
+                            <a href="#!">Start Bootstrap</a>
+                            on August 24, 2023
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container contain">
+        <form action="/compose" method="POST">
+            <div class="form-group">
+                <label for="postTile">Title</label>
+                <input type="text" class="form-control" name="title" placeholder="Enter Title" autofocus required>
+            </div>
+
+            <div class="form-group">
+                <label for="postContent">Content</label>
+                <textarea class="form-control" name="content" rows="3" placeholder="Enter content" autofocus
+                    required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-default btn-cp">Publish</button>
+        </form>
+
+        <%- include('partials/footer') %>
+
+            <script>
+                const form = document.querySelector('form');
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const title = form.title.value;
+                    const content = form.content.value;
+                    const user = document.getElementById('username-nav').innerText;
+                    const author = user.split(',')[1].trim();
+                    const res = await fetch('/compose', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ title, content, author })
+                    })
+                    const data = await res.json()
+                    console.log(data, res.status);
+                    if (data.message) {
+                        alert(data.message);
+                    }
+                    if (res.status === 200) {
+                        location.href = '/';
+                    }
+                });
+
+
+            </script>

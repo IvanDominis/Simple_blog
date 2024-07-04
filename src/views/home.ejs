@@ -1,0 +1,28 @@
+<%- include('partials/header'); %>
+<header class="masthead" style="background-image: url('/images/home-bg.jpg')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Blog created by using nodejs and ejs with MongoDB</h1>
+                    <span class="subheading">Welcome to my very first blog website sample</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container contain">
+    <h1 class="text-center mb-3">Newest blog</h1>
+    <div class="postBody">
+    <% posts?.forEach(post => { %>
+        <h2><%= post.title %></h2>
+            <p>
+                <% var shortText = post.content %>
+                <% truncShortText = shortText.substring(0, 150) %>
+                <%= truncShortText %> ...
+                <a href="post/<%= post.id %>">Read More</a>
+            </p>
+    <% }) %>
+    </div>
+<%- include('partials/footer'); %>

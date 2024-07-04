@@ -1,0 +1,107 @@
+<%- include('partials/header'); %>
+    <h1 class="text-center mt-3 mb-3">Your blogs</h1>
+    <div class="col-lg-11 ml-5">
+        <% if(posts.length == 0) { %>
+            <h4 class="text-center">You haven't post something yet!</h4>
+        <% } else { %>
+        <% posts?.forEach(post=> { %>
+            <div class="card mb-4">
+                <div class="card-body ml-3">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-11">
+                                <h2>
+                                    <%= post.title %>
+                                </h2>
+                                <p>
+                                    <% var shortText=post.content %>
+                                        <% truncShortText=shortText.substring(0, 150) %>
+                                            <%= truncShortText %> ...
+                                </p>
+                                <a href="/post/<%= post.id %>">Read More</a>
+                            </div>
+                            <div class="col-1">
+                                <button class="btn btn-primary ms-1 mb-3 mt-3" style="width:80px" id="edit" data-bs-toggle="modal"
+                                data-bs-target="#editModal">Edit</button>
+                                <button class="btn btn-danger ms-1 mb-3 mt-3" style="width:80px"><a class="text-white" id="delete"
+                                        href="/yourBlogs/edit/<%= post.id %>">Delete</a></button>
+                            </div>
+                            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Edit your blog</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form id="update">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="title" class="col-form-label">Title:</label>
+                                                    <input type="text" class="form-control" name="title" id="Title" value="<%= post.title %>" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="content" class="col-form-label">Content:</label>
+                                                    <textarea type="text" class="form-control" name="content" id="Content" required><%= post.content %></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary"><a class="text-white" href="yourBlogs/edit/<%= post.id %>">Save</a></button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }) %> 
+            <% } %>
+    </div>
+    <%- include('partials/footer'); %>
+
+<script>
+    const deleteBtn = document.querySelectorAll('#delete');
+    deleteBtn.forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const postId = e.target.href.split('/').pop();
+            const response = await fetch(`yourBlogs/delete/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                window.location.href = '/yourBlogs';
+            }
+            else {
+                alert('Something went wrong');
+            }
+        });
+    });
+    const formlist = document.querySelectorAll('form');
+    formlist.forEach(form => {
+    form.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const title = form.title.value;
+        const content = form.content.value;
+        const postId = e.target.href.split('/').pop();
+        const res = await fetch(`/yourBlogs/edit/${postId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, content})
+        })
+        console.log(3);
+        const data = await res.json()
+        if (data.message) {
+            alert(data.message);
+        }
+        if (res.status === 200) {
+            location.href = '/yourBlogs';
+        }
+    });});
+</script>
