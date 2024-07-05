@@ -2,8 +2,9 @@
   "name": "simple_blog",
   "version": "1.0.0",
   "description": "A simple blog using nodejs, express, ejs, tailwindcss, css",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
+    "start": "nodemon --inspect src/server.js",
     "dev": "nodemon ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
